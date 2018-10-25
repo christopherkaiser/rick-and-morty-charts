@@ -1,5 +1,5 @@
 import React from "react";
-import CharactersTable from "./charactersTable";
+import CharactersTable from "./CharactersTable";
 import { HorizontalBar } from "react-chartjs-2";
 
 const getData = characterSet => {

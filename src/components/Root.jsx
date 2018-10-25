@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import Characters from "./Characters";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
-export const Root = ({ store }) => (
+const Root = ({ store }) => (
   <Provider store={store}>
     <BrowserRouter>
       <Switch>
@@ -15,3 +15,5 @@ export const Root = ({ store }) => (
     </BrowserRouter>
   </Provider>
 );
+
+export default Root;

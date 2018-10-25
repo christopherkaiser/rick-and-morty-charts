@@ -7,7 +7,7 @@ import {
   resolvePaginatedJson
 } from "./../services/jsonPageService";
 import CharactersForm from "./CharactersForm";
-import CharactersViewMode from "./charactersViewMode";
+import CharactersViewMode from "./CharactersViewMode";
 
 //filter on status, location, origin, species, season, episode, name,
 //chart data
@@ -144,7 +144,7 @@ class Characters extends Component {
     filteredCharacters = filteredCharacters.slice(0, 50);
 
     return (
-      <React.Fragment>
+      <div className="container">
         <button
           className="btn btn-primary"
           onClick={() => this.setState({ formOpen: !formOpen })}
@@ -159,12 +159,6 @@ class Characters extends Component {
               statuses={["Alive", "Dead", "unknown"]}
               origins={this.locations}
               viewModes={["table", "bar"]}
-              speciesFilter={speciesFilter}
-              episodeFilter={episodeFilter}
-              statusFilter={statusFilter}
-              originFilter={originFilter}
-              viewMode={viewMode}
-              handler={this.selectHandler}
             />
           </div>
         </div>
@@ -202,7 +196,7 @@ class Characters extends Component {
             )}
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
