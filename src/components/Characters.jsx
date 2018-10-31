@@ -1,13 +1,18 @@
-import React, { Component } from "react";
-import _ from "lodash";
-import { getSpecies } from "./../services/speciesService";
+import React from "react";
 import StickyCard from "./common/stickyCard";
-import {
-  getPaginatedJson,
-  resolvePaginatedJson
-} from "./../services/jsonPageService";
 import CharactersForm from "./CharactersForm";
 import CharactersViewMode from "./CharactersViewMode";
+import { connect } from "react-redux";
+import { toggleFormVisable, setContentMode } from "../actions/characters";
+import {
+  charactersGetHoveredCharacter,
+  charactersGetFormVisable,
+  dataGetFilteredCharacters,
+  charactersGetContentMode
+} from "./../reducers";
+import Select from "./common/select";
+import { contentModes, contentModesByID } from "./contentModes";
+import ContentForm from "./ContentForm";
 
 //filter on status, location, origin, species, season, episode, name,
 //chart data
@@ -17,147 +22,51 @@ import CharactersViewMode from "./CharactersViewMode";
 // origins o to number of characters with origin o
 // locations l to number of characters with location l
 
-class Characters extends Component {
-  state = {
-    getStatus: "pending",
-    data: {
-      speciesFilter: "",
-      episodeFilter: 0,
-      statusFilter: "",
-      originFilter: "",
-      viewMode: "table"
-    },
-    sortColumn: { path: "episode.length", order: "desc" },
-    hoveredCharacterId: "",
-    formOpen: false
-  };
+const fillerText =
+  "Rick and Morty is an American adult animated science fiction sitcom created by Justin Roiland and Dan Harmon for Cartoon Network's late-night programming block Adult Swim.";
 
-  constructor(props) {
-    super(props);
-    this.episodes = [];
-    this.locations = [];
-    this.species = [];
-    this.chartCharacters = [];
-  }
+const mapStateToProps = state => ({
+  characters: dataGetFilteredCharacters(state),
+  hoveredCharacter: charactersGetHoveredCharacter(state),
+  formOpen: charactersGetFormVisable(state),
+  contentMode: charactersGetContentMode(state)
+});
 
-  async componentDidMount() {
-    const characterPromises = getPaginatedJson("/character", 25);
-    const episodePromises = getPaginatedJson("/episode", 2);
-    const locationPromises = getPaginatedJson("/location", 4);
+const mapDispatchToProps = dispatch => ({
+  onFormClick: () => dispatch(toggleFormVisable()),
+  contentModeHandler: ({ currentTarget }) =>
+    dispatch(setContentMode(currentTarget.value))
+});
 
-    this.characters = resolvePaginatedJson(
-      await Promise.all(characterPromises)
-    );
-    this.episodes = resolvePaginatedJson(await Promise.all(episodePromises));
-    this.locations = resolvePaginatedJson(await Promise.all(locationPromises));
-    this.species = getSpecies(this.characters);
-
-    this.characters = this.characters.map(c => {
-      c.location = {
-        id: Number(c.location.url.match(/\d+$/)),
-        name: c.location.name
-      };
-
-      c.origin = {
-        id: Number(c.origin.url.match(/\d+$/)),
-        name: c.origin.name
-      };
-
-      c.episode = c.episode.map(e => Number(e.match(/\d+$/)));
-      return c;
-    });
-
-    this.chartCharacters = _.orderBy(
-      this.characters,
-      [c => c.episode.length],
-      ["desc"]
-    );
-    this.setState({ getStatus: "complete" });
-  }
-
-  getMostFeaturedCharacters = (n, characterSet) => {
-    const sortedCharacters = _.orderBy(
-      characterSet,
-      [c => c.episode.length],
-      ["desc"]
-    );
-
-    return sortedCharacters.slice(0, n);
-  };
-
-  selectHandler = ({ currentTarget: input }) => {
-    const data = { ...this.state.data };
-    data[input.name] = input.value;
-    this.setState({ data, hoveredCharacterId: "" });
-  };
-
-  handleSort = sortColumn => {
-    this.setState({ sortColumn });
-  };
-
-  handleMouseOver = item => {
-    this.setState({ hoveredCharacterId: item.id });
-  };
-
-  fillerText =
-    "Rick and Morty is an American adult animated science fiction sitcom created by Justin Roiland and Dan Harmon for Cartoon Network's late-night programming block Adult Swim.";
-
-  episodePredicate = character => {
-    return character.episode.includes(Number(this.state.data.episodeFilter));
-  };
-
-  render() {
-    const { data, hoveredCharacterId, sortColumn, formOpen } = this.state;
-    const {
-      speciesFilter,
-      episodeFilter,
-      statusFilter,
-      originFilter,
-      viewMode
-    } = data;
-
-    let filteredCharacters = speciesFilter
-      ? this.chartCharacters.filter(c => speciesFilter === c.species)
-      : this.chartCharacters;
-
-    filteredCharacters = episodeFilter
-      ? filteredCharacters.filter(this.episodePredicate)
-      : filteredCharacters;
-
-    filteredCharacters = statusFilter
-      ? filteredCharacters.filter(c => statusFilter === c.status)
-      : filteredCharacters;
-
-    filteredCharacters = originFilter
-      ? filteredCharacters.filter(c => Number(originFilter) === c.origin.id)
-      : filteredCharacters;
-
-    const hoveredCharacter = filteredCharacters.find(
-      c => c.id === hoveredCharacterId
-    );
-
-    filteredCharacters = _.orderBy(
-      filteredCharacters,
-      [sortColumn.path],
-      [sortColumn.order]
-    );
-    filteredCharacters = filteredCharacters.slice(0, 50);
-
+const Characters = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  ({
+    hoveredCharacter,
+    formOpen,
+    onFormClick,
+    contentMode,
+    contentModeHandler
+  }) => {
     return (
       <div className="container">
-        <button
-          className="btn btn-primary"
-          onClick={() => this.setState({ formOpen: !formOpen })}
-        >
+        <Select
+          name={"contentMode"}
+          label={"Content Mode"}
+          options={contentModes.map(c => ({ value: c.name, label: c.label }))}
+          value={contentMode}
+          onChange={contentModeHandler}
+          error={null}
+        />
+
+        <button className="btn btn-primary" onClick={onFormClick}>
           options
         </button>
         <div className={formOpen ? "collapse show" : "collapse"}>
           <div className="card card-body">
-            <CharactersForm
-              species={this.species}
-              episodes={this.episodes}
+            <ContentForm
               statuses={["Alive", "Dead", "unknown"]}
-              origins={this.locations}
               viewModes={["table", "bar"]}
             />
           </div>
@@ -165,14 +74,7 @@ class Characters extends Component {
 
         <div className="row">
           <div className="col">
-            <CharactersViewMode
-              mode={viewMode}
-              characters={filteredCharacters}
-              sortColumn={sortColumn}
-              handleSort={this.handleSort}
-              handleMouseOver={this.handleMouseOver}
-              hoveredCharacterId={hoveredCharacterId}
-            />
+            <CharactersViewMode contentMode={contentMode} />
           </div>
 
           <div className="col-3">
@@ -188,17 +90,18 @@ class Characters extends Component {
                 ]}
               />
             ) : (
-              <StickyCard
-                imgSrc={"/img/rick-and-morty-logo.png"}
-                title={"Rick and Morty"}
-                detailsSet={[{ label: "", details: this.fillerText }]}
-              />
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">{"Rick and Morty"}</h5>
+                  <div className="card-text">{fillerText}</div>
+                </div>
+              </div>
             )}
           </div>
         </div>
       </div>
     );
   }
-}
+);
 
 export default Characters;

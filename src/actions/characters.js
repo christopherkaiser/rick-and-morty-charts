@@ -1,14 +1,3 @@
-//TOGGLE_FORM_VISABLE
-//SET_FETCH_STATUS_TO_COMPLETE
-//SET_HOVERED_CHARACTER_ID
-//SET_FORM_DATA
-//SET_SORT_COLUMN
-
-// runs update when fetch compelte instead of triggering state change
-// export const setFetchStatusToComplete = () => ({
-//   type: "SET_FETCH_STATUS_TO_COMPLETE"
-// });
-
 export const toggleFormVisable = () => ({
   type: "TOGGLE_FORM_VISABLE"
 });
@@ -24,7 +13,12 @@ export const setFormData = (name, value) => ({
   value
 });
 
-export const setSortColumn = (path, order = "desc") => ({
+export const setSortColumn = column => ({
   type: "SET_SORT_COLUMN",
-  sortColumn: { path, order }
+  sortColumn: column
+});
+
+export const setContentMode = value => ({
+  type: "SET_CONTENT_MODE",
+  value
 });

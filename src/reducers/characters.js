@@ -36,13 +36,23 @@ const sortColumn = (
   else return state;
 };
 
+const contentMode = (state = "characters", action) => {
+  if (action.type === "SET_CONTENT_MODE") return action.value;
+  else return state;
+};
+
 const characters = combineReducers({
   formVisable,
   hoveredCharacterID,
   formData,
-  sortColumn
+  sortColumn,
+  contentMode
 });
 
 export default characters;
 
+export const getFormVisable = state => state.formVisable;
+export const getHoveredCharacterID = state => state.hoveredCharacterID;
 export const getFormData = state => state.formData;
+export const getSortColumn = state => state.sortColumn;
+export const getContentMode = state => state.contentMode;

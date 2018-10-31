@@ -6,7 +6,7 @@ import React from "react";
 const StickyCard = ({ imgSrc, title, detailsSet }) => {
   return (
     <div className="card" style={{ position: "sticky", top: 0 }}>
-      <img className="card-img-top" src={imgSrc} alt="Card image cap" />
+      <img className="card-img-top" src={imgSrc} alt="Card cap" />
       <div className="card-body">
         <h5 className="card-title">{title}</h5>
         <div className="card-text">

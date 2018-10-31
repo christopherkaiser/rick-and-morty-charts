@@ -4,11 +4,21 @@ import { withRouter } from "react-router-dom";
 import Select from "./common/select";
 import { charactersGetFormData } from "../reducers/index";
 import { setFormData } from "../actions/characters";
+import {
+  dataGetLocations,
+  dataGetEpisodes,
+  dataGetCharacters
+} from "./../reducers";
+import { getSpecies } from "./../services/speciesService";
 
 //todo move this to common selectGroup
 
-const mapStateToProps = (state, ownProps) => ({
-  ...charactersGetFormData(state)
+const mapStateToProps = state => ({
+  ...charactersGetFormData(state),
+  //characters: a(),
+  species: getSpecies(dataGetCharacters(state)),
+  episodes: dataGetEpisodes(state),
+  origins: dataGetLocations(state)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -23,11 +33,11 @@ const CharactersForm = withRouter(
     mapDispatchToProps
   )(
     ({
-      species,
-      episodes,
-      statuses,
-      origins,
-      viewModes,
+      species = [],
+      episodes = [],
+      statuses = [],
+      origins = [],
+      viewModes = [],
       speciesFilter,
       episodeFilter,
       statusFilter,
@@ -40,55 +50,34 @@ const CharactersForm = withRouter(
           <Select
             name={"speciesFilter"}
             label={"species"}
-            options={
-              species
-                ? species.map(s => {
-                    return { value: s, label: s };
-                  })
-                : []
-            }
+            options={species.map(s => ({ value: s, label: s }))}
             value={speciesFilter}
             onChange={handler}
             error={null}
           />
+
           <Select
             name={"episodeFilter"}
             label={"episode"}
-            options={
-              episodes
-                ? episodes.map(e => {
-                    return { value: e.id, label: e.name };
-                  })
-                : []
-            }
+            options={episodes.map(e => ({ value: e.id, label: e.name }))}
             value={episodeFilter}
             onChange={handler}
             error={null}
           />
+
           <Select
             name={"statusFilter"}
             label={"status"}
-            options={
-              statuses
-                ? statuses.map(s => {
-                    return { value: s, label: s };
-                  })
-                : []
-            }
+            options={statuses.map(s => ({ value: s, label: s }))}
             value={statusFilter}
             onChange={handler}
             error={null}
           />
+
           <Select
             name={"originFilter"}
             label={"origin"}
-            options={
-              origins
-                ? origins.map(o => {
-                    return { value: o.id, label: o.name };
-                  })
-                : []
-            }
+            options={origins.map(o => ({ value: o.id, label: o.name }))}
             value={originFilter}
             onChange={handler}
             error={null}
@@ -97,13 +86,7 @@ const CharactersForm = withRouter(
           <Select
             name={"viewMode"}
             label={"Mode"}
-            options={
-              viewModes
-                ? viewModes.map(m => {
-                    return { value: m, label: m };
-                  })
-                : []
-            }
+            options={viewModes.map(m => ({ value: m, label: m }))}
             value={viewMode}
             onChange={handler}
             error={null}
