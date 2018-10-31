@@ -13,6 +13,7 @@ import {
 import { setHoveredCharacterID } from "./../actions/characters";
 import _ from "lodash";
 import { getSpeciesDetails } from "./../services/speciesService";
+import { getOriginDetails } from "./../services/originsService";
 
 const getData = (characterSet, path) => {
   return {
@@ -28,10 +29,18 @@ const getData = (characterSet, path) => {
   };
 };
 
+const getOrigins = state => {
+  const details = getOriginDetails(dataGetCharacters(state));
+  return dataGetLocations(state).map(l => ({
+    ...l,
+    characterCount: details[l.id] || 0
+  }));
+};
+
 const mapStateToProps = state => ({
   characters: dataGetFilteredCharacters(state),
   species: getSpeciesDetails(dataGetCharacters(state)),
-  origins: dataGetLocations(state),
+  origins: getOrigins(state),
   mode: charactersGetFormData(state).viewMode,
   hoveredCharacter: charactersGetHoveredCharacter(state),
   sortColumn: charactersGetSortColumn(state)
