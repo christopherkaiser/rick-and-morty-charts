@@ -61,7 +61,7 @@ const Characters = connect(
         />
 
         <button className="btn btn-primary" onClick={onFormClick}>
-          Options
+          options
         </button>
         <div className={formOpen ? "collapse show" : "collapse"}>
           <div className="card card-body">
