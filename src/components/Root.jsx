@@ -1,14 +1,14 @@
 import React from "react";
 import { Provider } from "react-redux";
-import Characters from "./Characters";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import Characters from "./Characters";
 import {
   fetchCharacterData,
   fetchEpisodesData,
   fetchLocationsData
 } from "../services/fetchData";
-import * as reducers from "./../reducers";
-import { setEpisodes, setLocations, setCharacters } from "./../actions/data";
+import * as reducers from "../reducers";
+import { setEpisodes, setLocations, setCharacters } from "../actions/data";
 import Episodes from "./Episodes";
 
 const Root = ({ store }) => {

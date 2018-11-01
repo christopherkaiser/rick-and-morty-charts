@@ -13,6 +13,7 @@ import {
 import Select from "./common/select";
 import { contentModes, contentModesByID } from "./contentModes";
 import ContentForm from "./ContentForm";
+import PropTypes from "prop-types";
 
 //filter on status, location, origin, species, season, episode, name,
 //chart data
@@ -103,5 +104,25 @@ const Characters = connect(
     );
   }
 );
+
+Characters.propTypes = {
+  hoveredCharacter: PropTypes.shape({
+    name: PropTypes.number,
+    image: PropTypes.string,
+    status: PropTypes.string,
+    origin: PropTypes.shape({
+      name: PropTypes.string
+    }),
+    species: PropTypes.string,
+    type: PropTypes.string
+  }),
+  formOpen: PropTypes.string,
+  onFormClick: PropTypes.func,
+  contentMode: PropTypes.shape({
+    name: PropTypes.string,
+    label: PropTypes.string
+  }),
+  contentModeHandler: PropTypes.func
+};
 
 export default Characters;
