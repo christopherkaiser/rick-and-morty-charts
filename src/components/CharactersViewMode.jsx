@@ -144,7 +144,7 @@ const CharactersViewMode = connect(
     };
 
     const hoverFunction = {
-      character: tooltipModel => {
+      characters: tooltipModel => {
         const reletiveCharacterId =
           tooltipModel.dataPoints && tooltipModel.dataPoints[0].index;
         if (
